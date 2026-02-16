@@ -47,30 +47,6 @@ La aplicación está construida como una **Single Page Application (SPA)**, lo q
 - Flujo de compra claro y ordenado.
 
 ---
-## 🧠 Estructura del proyecto
-src/
-│
-├── components/
-│ ├── NavBar/
-│ ├── ItemListContainer/
-│ ├── ItemDetailContainer/
-│ ├── ItemCount/
-│ ├── Cart/
-│ ├── Checkout/
-│
-├── context/
-│ └── CartContext.jsx
-│
-├── service/
-│ └── firebase.jsx
-│
-├── data/
-│ └── products.js
-│
-├── App.jsx
-├── main.jsx
-
----
 
 ## 🌐 Navegación (React Router)
 
