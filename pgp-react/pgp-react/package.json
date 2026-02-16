@@ -11,7 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "firebase": "^12.9.0",
+    "firebase": "^12.8.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
@@ -30,6 +30,6 @@
 =======
   "dependencies": {
     "react-router-dom": "^7.13.0"
->>>>>>> b2e3e1f3a7cc7e27bc1caf2c9bcd2f2e8ebfeb6d
+>>>>>>> 5e496fa5ab14891598666b6c97354243da02e1b1
   }
 }

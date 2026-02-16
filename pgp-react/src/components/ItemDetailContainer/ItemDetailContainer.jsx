@@ -1,33 +1,41 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { games } from "../../data/games";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../service/firebase";
 import ItemDetail from "../ItemDetail/ItemDetail";
 
 const ItemDetailContainer = () => {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const { itemId } = useParams();
 
   useEffect(() => {
-    setLoading(true);
+    const traerProducto = async () => {
+      try {
+        const docRef = doc(db, "productos", itemId);
+        const snapshot = await getDoc(docRef);
 
-    const getGame = new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(games.find(game => game.id === itemId));
-      }, 800);
-    });
+        if (snapshot.exists()) {
+          setItem({
+            id: snapshot.id,
+            ...snapshot.data(),
+          });
+        }
+      } catch (error) {
+        console.log("Error trayendo producto:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    getGame.then(res => {
-      setItem(res);
-      setLoading(false);
-    });
+    traerProducto();
   }, [itemId]);
 
-  return (
-    <>
-      {loading ? <h2>Cargando detalle...</h2> : item && <ItemDetail {...item} />}
-    </>
-  );
+  if (loading) return <h2>Cargando detalle...</h2>;
+  if (!item) return <h2>Producto no encontrado</h2>;
+
+  return <ItemDetail item={item} />;
 };
 
 export default ItemDetailContainer;

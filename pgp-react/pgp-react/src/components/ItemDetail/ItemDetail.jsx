@@ -1,34 +1,30 @@
 import ItemCount from "../ItemCount/ItemCount";
 import { useCart } from "../../context/CartContext";
 
-const ItemDetail = ({ item }) => {
-
+const ItemDetail = ({ id, title, description, price, image }) => {
   const { addToCart } = useCart();
 
   const onAdd = (quantity) => {
-    addToCart(item, quantity);
+    addToCart({ id, title, price }, quantity);
   };
 
   return (
     <div className="item-detail">
-      <h2>{item.title}</h2>
+      <h2>{title}</h2>
 
       <img
-        src={item.image}
-        alt={item.title}
+        src={image}
+        alt={title}
         className="item-detail-img"
       />
 
-      <p>{item.description}</p>
-      <p>${item.price}</p>
+      <p>{description}</p>
+      <p>${price}</p>
 
-      <ItemCount
-        stock={item.stock}
-        initial={1}
-        onAdd={onAdd}
-      />
+      <ItemCount stock={10} initial={1} onAdd={onAdd} />
     </div>
   );
 };
 
 export default ItemDetail;
+

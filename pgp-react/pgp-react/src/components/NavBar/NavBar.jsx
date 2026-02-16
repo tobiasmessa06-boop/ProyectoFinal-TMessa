@@ -1,28 +1,21 @@
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { useCart } from "../../context/CartContext";
-import { useEffect, useState } from "react";
 import "./NavBar.css";
 import logo from "../../assets/logo.png";
 
+
 const NavBar = () => {
   const { totalItems } = useCart();
-  const [animate, setAnimate] = useState(false);
-
-  useEffect(() => {
-    if (totalItems > 0) {
-      setAnimate(true);
-      const timer = setTimeout(() => setAnimate(false), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [totalItems]);
 
   return (
     <nav className="navbar">
-      <div className="logo-container">
-        <img src={logo} alt="Logo" className="logo-img" />
-        <span className="logo-text">PATAGONIA GO PLAY</span>
-      </div>
+     <div className="logo-container">
+  <img src={logo} alt="Logo" className="logo-img" />
+  <span className="logo-text">PATAGONIA GO PLAY</span>
+</div>
+
+
 
       <div className="links">
         <Link to="/">Todos</Link>
@@ -32,15 +25,10 @@ const NavBar = () => {
         <Link to="/categoria/terror">Terror</Link>
       </div>
 
-      <Link
-        to="/cart"
-        className={`cart-widget ${totalItems > 0 ? "active" : ""}`}
-      >
+      <Link to="/cart" className="cart-widget">
         <FaShoppingCart size={22} />
         {totalItems > 0 && (
-          <span className={`cart-count ${animate ? "bounce" : ""}`}>
-            {totalItems}
-          </span>
+          <span className="cart-count">{totalItems}</span>
         )}
       </Link>
     </nav>

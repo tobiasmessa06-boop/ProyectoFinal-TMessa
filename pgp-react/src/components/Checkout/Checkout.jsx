@@ -1,9 +1,27 @@
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
+import { db } from "../../service/firebase";
+
+
+
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  writeBatch,
+  doc
+} from "firebase/firestore";
 
 const Checkout = () => {
+
   const { cart, totalPrice, clearCart } = useCart();
-  const [buyer, setBuyer] = useState({ Nombre: "", Email: "", Telefono: "" });
+
+  const [buyer, setBuyer] = useState({
+    name: "",
+    phone: "",
+    email: ""
+  });
+
   const [orderId, setOrderId] = useState(null);
 
   const handleChange = (e) => {
@@ -13,62 +31,79 @@ const Checkout = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simulación de compra
-    const fakeOrderId = Math.floor(Math.random() * 100000);
-    setOrderId(fakeOrderId);
-    clearCart();
+    const batch = writeBatch(db);
+
+    try {
+
+      const order = {
+        buyer,
+        items: cart,
+        total: totalPrice,
+        date: serverTimestamp()
+      };
+
+      const orderRef = await addDoc(
+        collection(db, "ordenes"),
+        order
+      );
+
+      cart.forEach(prod => {
+        const productRef = doc(db, "productos", prod.id);
+
+        batch.update(productRef, {
+          stock: prod.stock - prod.quantity
+        });
+      });
+
+      await batch.commit();
+
+      setOrderId(orderRef.id);
+      clearCart();
+
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (orderId) {
-    return (
-      <div style={{ padding: "40px", textAlign: "center" }}>
-        <h2>¡Gracias por tu compra! 🎉</h2>
-        <p>Tu número de orden es: <strong>{orderId}</strong></p>
-      </div>
-    );
+    return <h2>Gracias por tu compra 🎮 ID: {orderId}</h2>;
   }
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h2>Finalizar compra</h2>
+    <div>
+      <h2>Checkout</h2>
 
-      <form onSubmit={handleSubmit} style={{ maxWidth: "400px" }}>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           name="name"
           placeholder="Nombre"
-          value={buyer.name}
           onChange={handleChange}
           required
         />
-        <br /><br />
+
+        <input
+          type="text"
+          name="phone"
+          placeholder="Teléfono"
+          onChange={handleChange}
+          required
+        />
 
         <input
           type="email"
           name="email"
           placeholder="Email"
-          value={buyer.email}
           onChange={handleChange}
           required
         />
-        <br /><br />
 
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Teléfono"
-          value={buyer.phone}
-          onChange={handleChange}
-          required
-        />
-        <br /><br />
-
-        <h3>Total a pagar: ${totalPrice}</h3>
-
-        <button type="submit">Confirmar compra</button>
+        <button type="submit">
+          Finalizar compra
+        </button>
       </form>
     </div>
   );
